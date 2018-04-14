@@ -2,7 +2,8 @@
 const BOOK_STATUS = {
   want: 'wantToRead',
   reading: 'currentlyReading',
-  read: 'read'
+  read: 'read',
+  none: 'none'
 };
 
 export default BOOK_STATUS;

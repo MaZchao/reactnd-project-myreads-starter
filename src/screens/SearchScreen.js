@@ -17,14 +17,14 @@ class SearchSreen extends React.Component {
       {
         query: e.target.value
       },
-      this.debouncedSearch
+      this.throttledSearch
     );
   };
 
   /**
-   * Search function, using debounce to prevent request happening too fast.
+   * Search function, using throttle to prevent request happening too fast.
    */
-  debouncedSearch = _.debounce(() => {
+  throttledSearch = _.throttle(() => {
     if (!this.state.query) return;
     BooksAPI.search(this.state.query)
       .then(res => {
@@ -34,7 +34,6 @@ class SearchSreen extends React.Component {
             searchResult: res
           });
         } else {
-          console.log('nothing found');
           this.setState({
             msg: 'Nothing found',
             searchResult: []
@@ -44,7 +43,7 @@ class SearchSreen extends React.Component {
       .catch(() => {
         alert('Internet error, search failed');
       });
-  }, 200, true);
+  }, 500, true);
 
   render() {
     return (

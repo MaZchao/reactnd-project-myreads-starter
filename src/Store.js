@@ -1,4 +1,5 @@
 import { observable, action, decorate } from 'mobx';
+import BOOK_STATUS from './Config';
 import { update } from './BooksAPI';
 
 // A store that saves books array for multi components to operate
@@ -24,8 +25,14 @@ class Store {
       .then(res => {
         book.shelf = shelf;
         // if this is a new book
-        if (!this.books.includes(book)) {
+        const index = this.books.findIndex(b => b.id === book.id);
+        console.log(index);
+        if (index === -1 && shelf !== BOOK_STATUS.none) {
           this.books.push(book);
+        }
+        // if it's about deleting this book
+        if (shelf === BOOK_STATUS.none) {
+          this.books = this.books.filter(b => b.id !== book.id);
         }
       })
       .catch(() => {
