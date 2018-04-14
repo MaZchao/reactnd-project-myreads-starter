@@ -20,25 +20,27 @@ class Store {
   /**
    * Set book shelf
    */
-  setBookShelf = (book, shelf) => {
-    update(book, shelf)
-      .then(res => {
-        book.shelf = shelf;
-        // if this is a new book
-        const index = this.books.findIndex(b => b.id === book.id);
-        console.log(index);
-        if (index === -1 && shelf !== BOOK_STATUS.none) {
-          this.books.push(book);
-        }
-        // if it's about deleting this book
-        if (shelf === BOOK_STATUS.none) {
-          this.books = this.books.filter(b => b.id !== book.id);
-        }
-      })
-      .catch(() => {
-        alert('Internet error, set bok shelf failed');
-      });
-  };
+  setBookShelf = (book, shelf) =>
+    new Promise(resolve => {
+      update(book, shelf)
+        .then(res => {
+          book.shelf = shelf;
+          // if this is a new book
+          const index = this.books.findIndex(b => b.id === book.id);
+          if (index === -1 && shelf !== BOOK_STATUS.none) {
+            this.books.push(book);
+          }
+          // if it's about deleting this book
+          if (shelf === BOOK_STATUS.none) {
+            // this.books = this.books.filter(b => b.id !== book.id);
+            this.books.splice(index, 1);
+          }
+          resolve();
+        })
+        .catch(() => {
+          alert('Internet error, set bok shelf failed');
+        });
+    });
 }
 
 decorate(Store, {

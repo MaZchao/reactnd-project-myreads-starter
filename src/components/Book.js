@@ -16,29 +16,33 @@ const Book = observer(
      * @param {string} shelf The shelf selected
      */
     onBookShelfChange = shelf => {
-      const { book } = this.props;
-      console.log(book);
+      const { book, page } = this.props;
       // if clicking on the current shelf, do nothing
       if (shelf !== book.shelf) {
-        store.setBookShelf(book, shelf);
+        store.setBookShelf(book, shelf).then(() => {
+          /*
+           * Using this forceUpdate is because sometimes i set the book's shelf to none
+           * in search screen and the related Book component doesn't seem to re-render.
+           * So i have to manully update this (don't know why though....)
+           */
+          if (page === 'search') {
+            this.forceUpdate();
+          }
+        });
       }
     };
 
     render() {
-      console.log('render');
       const { book, page } = this.props;
+      const storeBooks = store.books;
       // if this is a book in a search result
       if (!book.shelf) {
         // check if this book is already in our shelves
-        const index = store.books.findIndex(b => b.id === book.id);
+        const index = storeBooks.findIndex(b => b.id === book.id);
         // if it's in, set the shelf.
         if (index !== -1) {
-          book.shelf = store.books[index].shelf;
+          book.shelf = storeBooks[index].shelf;
         }
-      }
-
-      if (book.shelf === BOOK_STATUS.none) {
-        book.shelf = '';
       }
 
       return (
@@ -49,12 +53,13 @@ const Book = observer(
               style={{
                 width: 128,
                 height: 193,
-                backgroundImage: `url(${book.imageLinks && book.imageLinks.thumbnail})`
+                backgroundImage: `url(${book.imageLinks &&
+                  book.imageLinks.thumbnail})`
               }}
             />
             {/* if this is search screen and it's already in our books, show this check mark. */}
             {page === 'search' &&
-              book.shelf && <div className="book-checked-mark" />}
+              book.shelf && book.shelf !== BOOK_STATUS.none && <div className="book-checked-mark" />}
             <div className="book-shelf-changer">
               <select
                 onChange={e => {
