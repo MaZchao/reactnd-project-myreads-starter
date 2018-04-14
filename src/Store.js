@@ -1,4 +1,5 @@
 import { observable, action, decorate } from 'mobx';
+import { update } from './BooksAPI';
 
 // A store that saves books array for multi components to operate
 class Store {
@@ -7,6 +8,10 @@ class Store {
   setBooks = books => {
     this.books = books;
   };
+
+  setBookStatus = (book, status) => {
+    
+  }
 }
 
 decorate(Store, {
