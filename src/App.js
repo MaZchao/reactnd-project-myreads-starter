@@ -5,6 +5,7 @@ import BOOK_STATUS from './Config';
 import HomeScreen from './screens/HomeScreen';
 import SearchScreen from './screens/SearchScreen';
 import store from './Store';
+import { observer } from 'mobx-react';
 import './App.css';
 
 class BooksApp extends React.Component {

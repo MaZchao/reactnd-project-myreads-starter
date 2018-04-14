@@ -172,3 +172,26 @@ body, .app {
   text-align: center;
   font-size: 0.8em;
 }
+
+/* loading indicator style */
+.loading {
+  display: block;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  border: 3px solid #60ac5d44;
+  border-top-color: #60ac5d;
+  animation: spin 1s infinite linear;
+  position: relative;
+  margin: 100px auto 0;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
