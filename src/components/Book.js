@@ -7,6 +7,12 @@ class Book extends React.Component {
     book: PropTypes.object.isRequired
   };
 
+  onBookStatusChange = (status) => {
+    const { book } = this.props;
+    console.log(book);
+    console.log(status);
+  }
+
   render() {
     const { book } = this.props;
 
@@ -18,12 +24,15 @@ class Book extends React.Component {
             style={{
               width: 128,
               height: 193,
-              backgroundImage:
-                `url(${book.imageLinks.thumbnail})`
+              backgroundImage: `url(${book.imageLinks.thumbnail})`
             }}
           />
           <div className="book-shelf-changer">
-            <select>
+            <select
+              onChange={(e) => {
+                this.onBookStatusChange(e.target.value)
+              }}
+            >
               <option value="none" disabled>
                 Move to...
               </option>
