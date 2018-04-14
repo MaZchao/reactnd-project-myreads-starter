@@ -5,18 +5,20 @@ import Book from './Book';
 
 class BookList extends React.Component {
   static propTypes = {
-    books: PropTypes.array.isRequired
+    books: PropTypes.array.isRequired,
+    page: PropTypes.string
   };
 
   static defaultProps = {
-    books: []
+    books: [],
+    page: ''
   };
 
   render() {
-    const { books } = this.props;
+    const { books, page } = this.props;
 
-    // if there are no books, show this
-    if (books.length === 0) {
+    // if there are no books, show this message (not on search screen)
+    if (books.length === 0 && page !== 'search') {
       return (
         <div>
           <p>There are no books on this shelf!</p>
@@ -27,8 +29,8 @@ class BookList extends React.Component {
     // normal look
     return (
       <ol className="books-grid">
-        {books.map(book => (
-          <li key={book.title}>
+        {books.map((book, index) => (
+          <li key={`${book.id}`}>
             <Book onBookStatusChange={this.onBookStatusChanged} book={book} />
           </li>
         ))}

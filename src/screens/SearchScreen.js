@@ -1,9 +1,51 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import _ from 'underscore';
 import BookList from './../components/BookList';
-import BOOK_STATUS from './../Config';
+import * as BooksAPI from './../BooksAPI';
 
-class HomeScreen extends React.Component {
+class SearchSreen extends React.Component {
+  state = {
+    searchResult: [],
+    query: '',
+    msg: ''
+  };
+
+  // On input change state
+  onInput = e => {
+    this.setState(
+      {
+        query: e.target.value
+      },
+      this.debouncedSearch
+    );
+  };
+
+  /**
+   * Search function, using debounce to prevent request happening too fast.
+   */
+  debouncedSearch = _.debounce(() => {
+    if (!this.state.query) return;
+    BooksAPI.search(this.state.query)
+      .then(res => {
+        if (Array.isArray(res) && res.length > 0) {
+          this.setState({
+            msg: '',
+            searchResult: res
+          });
+        } else {
+          console.log('nothing found');
+          this.setState({
+            msg: 'Nothing found',
+            searchResult: []
+          });
+        }
+      })
+      .catch(() => {
+        alert('Internet error, search failed');
+      });
+  }, 200, true);
+
   render() {
     return (
       <div className="search-books">
@@ -12,15 +54,27 @@ class HomeScreen extends React.Component {
             Close
           </Link>
           <div className="search-books-input-wrapper">
-            <input type="text" placeholder="Search by title or author" />
+            <input
+              onChange={this.onInput}
+              type="text"
+              value={this.state.query}
+              placeholder="Search by title or author"
+            />
           </div>
         </div>
-        <div className="search-books-results">
-          <ol className="books-grid" />
-        </div>
+        {this.state.msg ? (
+          // if search returns nothing, show this
+          <div className="search-books-results">
+            <p>{this.state.msg}</p>
+          </div>
+        ) : (
+          <div className="search-books-results">
+            <BookList page="search" books={this.state.searchResult} />
+          </div>
+        )}
       </div>
     );
   }
 }
 
-export default HomeScreen;
+export default SearchSreen;

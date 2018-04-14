@@ -20,10 +20,18 @@ class Store {
    * Set book shelf
    */
   setBookShelf = (book, shelf) => {
-    update(book, shelf).then(res => {
-      book.shelf = shelf
-    })
-  }
+    update(book, shelf)
+      .then(res => {
+        book.shelf = shelf;
+        // if this is a new book
+        if (!this.books.includes(book)) {
+          this.books.push(book);
+        }
+      })
+      .catch(() => {
+        alert('Internet error, set bok shelf failed');
+      });
+  };
 }
 
 decorate(Store, {

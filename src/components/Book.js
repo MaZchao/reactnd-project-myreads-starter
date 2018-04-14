@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import BOOK_STATUS from './../Config';
 import { observer } from 'mobx-react';
 import store from './../Store';
 
@@ -18,12 +19,22 @@ const Book = observer(
       const { book } = this.props;
       // if clicking on the current shelf, do nothing
       if (shelf !== book.shelf) {
-        store.setBookShelf(book, shelf)
+        store.setBookShelf(book, shelf);
       }
     };
 
     render() {
       const { book } = this.props;
+
+      // if this is a book in a search result
+      if (!book.shelf) {
+        // check if this book is already in our shelves
+        const index = store.books.findIndex(b => b.id === book.id);
+        // if it's in, set the shelf.
+        if (index !== -1) {
+          book.shelf = store.books[index].shelf;
+        }
+      }
 
       return (
         <div className="book">
@@ -41,6 +52,7 @@ const Book = observer(
                 onChange={e => {
                   this.onBookShelfChange(e.target.value);
                 }}
+                defaultValue={book.shelf || 'none'}
               >
                 <option value="none" disabled>
                   Move to...
@@ -53,7 +65,9 @@ const Book = observer(
             </div>
           </div>
           <div className="book-title">{book.title}</div>
-          <div className="book-authors">{book.authors.join(' & ')}</div>
+          <div className="book-authors">
+            {book.authors && book.authors.join(' & ')}
+          </div>
         </div>
       );
     }
